@@ -1,0 +1,2 @@
+lock device in mspdebug
+reset device and attach to tty
