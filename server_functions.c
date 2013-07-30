@@ -8,13 +8,28 @@
 #include "server_functions.h"
 #include "mspdebug.h"
 
-//#define DEBUG_FUNCTIONS_Trace
+#define DEBUG_FUNCTIONS_Trace
 #define DEBUG_FUNCTIONS_Info
 #include "debug.h"
 
+static char *get_file_name(char *filepath) {
+	int i;
+	char *p = NULL;
+	i = strlen(filepath) - 1;
+	p = &filepath[i];
+	while (i-- > 0) {
+		if (*p == '/' || *p == '\\') {
+			p +=1;
+			break;
+		}
+		p--;
+	}
+	return p;
+}
+
 static char *get_file_path(char *filepath, int len, int sfd_client, char *filename) {
 	const char *TMP_DIR = "/tmp";
-	snprintf(filepath, len, "%s/%d-%s", TMP_DIR, sfd_client, filename);
+	snprintf(filepath, len, "%s/%d-%s", TMP_DIR, sfd_client, get_file_name(filename));
 	Trace("filepath=%s", filepath);
 	return filepath;
 }
@@ -105,27 +120,31 @@ static void server_commond_gdb_stop(void *args) {
 }
 
 void server_command_gdb(int sfd_client, struct packet* shp) {
-	int access_ok;
-	char filepath[1024];
+	int access_ok = 0;
+	char filepath[1024] = "";
 	char filename[128] = "";
 	char serial[64] = "";
 	int port = 0;
 	sscanf(shp->buffer, "%60s %d %100s", serial, &port, filename);
-	get_file_path(filepath, sizeof(filepath), sfd_client, filename);
-	access_ok = access(filepath, R_OK);
-	shp->type = INFO;
-	shp->comid = GDB;
-	strcpy(shp->buffer, access_ok == 0 ? "Access file OK" : "Error accessing file for programming device.");
-	send_packet(sfd_client, shp);
-	if (access_ok != 0) {
-		send_EOT(sfd_client, shp);
-		return;
+	Trace("%s", filename);
+	if (strcmp(filename, "(null)") != 0)
+		get_file_path(filepath, sizeof(filepath), sfd_client, filename);
+
+	if (strlen(filepath) > 0) {
+		access_ok = access(filepath, R_OK);
+		shp->type = INFO;
+		shp->comid = GDB;
+		strcpy(shp->buffer, access_ok == 0 ? "Access file OK" : "Error accessing file for programming device.");
+		send_packet(sfd_client, shp);
+		if (access_ok != 0) {
+			send_EOT(sfd_client, shp);
+			return;
+		}
 	}
 	Trace("serial(%s), port(%d) file(%s)", serial, port, filepath);
 
 	int fd;
 	FILE *fp = NULL;
-	Trace("serial(%s), port(%d) file(%s)", serial, port, filepath);
 	fp = mspdebug_prog_gdb_start(serial, port, filepath);
 	shp->type = INFO;
 	shp->comid = GDB;

@@ -36,7 +36,7 @@ void mspdebug_prog_stop(FILE *pfd) {
  */
 FILE* mspdebug_prog_gdb_start(char *serial, int port, char *filepath) {
 	char commond[1024];
-	if (filepath == NULL)
+	if (filepath == NULL || strlen(filepath) == 0)
 		snprintf(commond, sizeof(commond),
 				"mspdebug -s %s -j ft232h \"reset\" \"gdb %d\"", serial, port);
 	else

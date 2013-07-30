@@ -91,7 +91,8 @@ int main(int argc, char* argv[]) {
 		client_command_list(sfd_client, &chp);
 		break;
 	case CMD_GDB:
-		client_command_put(sfd_client, &chp, cmd.file);
+		if (cmd.file != NULL)
+			client_command_put(sfd_client, &chp, cmd.file);
 		client_command_gdb(sfd_client, &chp, cmd.serial, cmd.port, cmd.file);
 		break;
 	case CMD_PROG:
