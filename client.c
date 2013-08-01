@@ -43,6 +43,9 @@ int main(int argc, char* argv[]) {
 	size_t size_sockaddr = sizeof(struct sockaddr);
 	struct packet chp;
 
+	setvbuf(stderr, NULL, _IONBF, 0);
+	setvbuf(stdout, NULL, _IONBF, 0);
+
 	if (argc == 3 && strcmp(argv[2], "list") == 0) {
 		printf("list usb device...\n");
 		cmd.type = CMD_LIST;
