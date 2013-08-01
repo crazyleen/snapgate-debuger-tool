@@ -77,8 +77,11 @@ int main(int argc, char* argv[]) {
 	sin_server.sin_addr.s_addr = inet_addr(cmd.ip);
 	sin_server.sin_port = htons(PORTSERVER);
 
-	if ((x = connect(sfd_client, (struct sockaddr*) &sin_server, size_sockaddr)) < 0)
-		er("connect()", x);
+	if ((x = connect(sfd_client, (struct sockaddr*) &sin_server, size_sockaddr)) < 0) {
+		perror("connect error");
+		close(sfd_client);
+		return EXIT_FAILURE;
+	}
 
 	printf("Attempting communication with server @ %s:%d...\n\n", cmd.ip, PORTSERVER);
 	//END: initialization
