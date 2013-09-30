@@ -112,7 +112,7 @@ int socket_server(int port, int maxconnect) {
 }
 
 int main(int argc, char**argv) {
-	const char *pidfile = "/var/run/ftp_multithread_server.pid";
+	const char *pidfile = "/var/run/snapgate-debuger-server.pid";
 	if (write_pid_lock(pidfile) < 0) {
 		printf("%s: already running\n", argv[0]);
 		return 0;

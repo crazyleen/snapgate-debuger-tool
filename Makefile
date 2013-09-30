@@ -21,15 +21,15 @@ export INCLUDES
 export TOPDIR
 
 
-APP=client server
+APP=snapgate-debuger-client snapgate-debuger-server
 all: $(APP) 
 
 OBJECTSCLIENT = packet.o client_functions.o file_transfer.o client.o
-client:	${OBJECTSCLIENT}
+snapgate-debuger-client:	${OBJECTSCLIENT}
 	@@cd $(BUILDDIR) && cd $(BUILDDIR) && $(CC) $(INCLUDES)  ${CFLAGS}  $^ -o $@ ${LDFLAGS}
 
 OBJECTSSERVER = packet.o server_functions.o file_transfer.o server.o xpopen.o mspdebug.o util.o
-server:	${OBJECTSSERVER}
+snapgate-debuger-server:	${OBJECTSSERVER}
 	@@cd $(BUILDDIR) && cd $(BUILDDIR) && $(CC) $(INCLUDES)  ${CFLAGS}  $^ -o $@ ${LDFLAGS} -lpthread
 	
 .c.o:
