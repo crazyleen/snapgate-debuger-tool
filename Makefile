@@ -1,46 +1,34 @@
 
-TOPDIR = $(shell pwd)
-BUILDDIR ?= $(TOPDIR)/build
-PREFIX ?= $(TOPDIR)/bin
 
 #CROSS_COMPILE ?= arm-none-linux-gnueabi-
 #CROSS_COMPILE ?= arm-arago-linux-gnueabi-
 #CROSS_COMPILE ?= arm-linux-
 CC=$(CROSS_COMPILE)gcc
-CFLAGS = -g -Wall
+CFLAGS = -o1 -Wall
 LDFLAGS := 
 LIBS :=
-INCLUDES := -I$(TOPDIR)
-
-VPATH = $(BUILDDIR)
-
-#export 
-export CC
-export CFLAGS
-export INCLUDES
-export TOPDIR
-
+INCLUDES := 
 
 APP=snapgate-debuger-client snapgate-debuger-server
 all: $(APP) 
 
 OBJECTSCLIENT = packet.o client_functions.o file_transfer.o client.o
 snapgate-debuger-client:	${OBJECTSCLIENT}
-	@@cd $(BUILDDIR) && cd $(BUILDDIR) && $(CC) $(INCLUDES)  ${CFLAGS}  $^ -o $@ ${LDFLAGS}
+	@$(CC) $(INCLUDES)  ${CFLAGS}  $^ -o $@ ${LDFLAGS}
 
 OBJECTSSERVER = packet.o server_functions.o file_transfer.o server.o xpopen.o mspdebug.o util.o
 snapgate-debuger-server:	${OBJECTSSERVER}
-	@@cd $(BUILDDIR) && cd $(BUILDDIR) && $(CC) $(INCLUDES)  ${CFLAGS}  $^ -o $@ ${LDFLAGS} -lpthread
+	@$(CC) $(INCLUDES)  ${CFLAGS}  $^ -o $@ ${LDFLAGS} -lpthread
 	
 .c.o:
-	@$(CC) -c $(CFLAGS) $(INCLUDES)   $< -o $(BUILDDIR)/$@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 install:
-	@cd $(BUILDDIR) && cp  $(APP) $(PREFIX)
-	
+	@cp snapgate-debuger-client mspdebug-snapgate
+	@cp snapgate-debuger-server mspdebug-server
 
 clean:
-	@cd $(BUILDDIR) && rm -f *.o $(APP)
-	@cd $(PREFIX) && rm -f $(APP)
+	@rm -f *.o $(APP)
+	@rm -f $(APP) mspdebug-snapgate mspdebug-server
 
 .PHONY: clean install
