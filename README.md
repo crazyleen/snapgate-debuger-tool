@@ -24,3 +24,7 @@ download program:
 	
 	./snapgate-debuger-client <ip address> <usb serial> <port> <filename> prog
 		
+
+## install
+	on ubuntu, copy mspdebug-snapgate to /usr/bin/
+	on snapgate, copy mspdebug-server to /bin/
